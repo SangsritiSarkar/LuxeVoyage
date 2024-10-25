@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from '../api-client'; //import func from api-client
 import { useAppContext } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
@@ -12,8 +12,8 @@ export type RegisterFormData = {
     confirmPassword: string;
 }
 
-const Register=()=>{
-
+const Register=()=>{  
+    const queryClient = useQueryClient();
     const  navigate = useNavigate();
     const {showToast} = useAppContext();
     const { 
@@ -25,8 +25,10 @@ const Register=()=>{
 
     //useMutation has built in use state hook ..therefore no need to manage state 
     const mutation = useMutation(apiClient.register,{
-        onSuccess: ()=>{
+        onSuccess: async ()=>{
             showToast({message: "Registration success!", type: "SUCCESS"})
+            //invalidate query before navigating to home page
+            await queryClient.invalidateQueries("validateToken");
             navigate("/");
         },
         onError: (error: Error)=>{
@@ -35,12 +37,7 @@ const Register=()=>{
     })
 
     const onSubmit = handleSubmit((data)=>{
-        const modifiedData={
-            ...data,
-            password: "password",
-            confirmPassword: "password"
-        }
-        mutation.mutate(modifiedData)
+        mutation.mutate(data)
     });
 
     return(

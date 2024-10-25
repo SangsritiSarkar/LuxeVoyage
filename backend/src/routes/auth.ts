@@ -28,12 +28,12 @@ router.post("/login",[
         const user = await User.findOne({email});
 
         if(!user){
-            res.status(400).json({message: "Invalid credentials 1"})
+            res.status(400).json({message: "Invalid credentials"})
             return 
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch){
-            res.status(400).json({message: "Invalid credentials 2"})
+            res.status(400).json({message: "Invalid credentials"})
             return
         }
 
@@ -62,6 +62,13 @@ router.post("/login",[
 //validate token endpoint, goes through verifyToken middleware if verified send res 200 with the userId
 router.get("/validate-token", verifyToken, (req:Request, res: Response)=>{
     res.status(200).send({userId: req.userId})
+});
+
+router.post("/logout", (req: Request, res: Response)=>{
+    res.cookie("auth_token", "", {
+        expires: new Date(0),
+    });
+    res.send();
 });
 
 export default router;
