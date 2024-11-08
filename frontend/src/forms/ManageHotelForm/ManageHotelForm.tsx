@@ -1,6 +1,8 @@
 import { FormProvider, useForm } from "react-hook-form";
 import DetailsSection from "./DetailsSection";
 import TypeSection from "./TypeSection";
+import FacilitiesSection from "./FacilitiesSection";
+import GuestsSection from "./GuestsSection";
 
 export type HotelFormData = {
     name: string;
@@ -23,6 +25,8 @@ const ManageHotelForm = ()=>{
             <form className="flex flex-col gap-10">
                 <DetailsSection />
                 <TypeSection />
+                <FacilitiesSection />
+                <GuestsSection />
             </form>
         </FormProvider> //all these individual child sections inside of this form..it can use formMethods from useForm hook
     );
