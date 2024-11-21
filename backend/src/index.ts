@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "https://luxevoyage-zkjx.onrender.com",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
 }))
 
@@ -34,9 +34,17 @@ app.use("/api/users", userRoutes)
 app.use("/api/my-hotels", myHotelRoutes)
 
 //add-hotel is a protencted route , therefore below *
-app.get("*", (req: Request, res: Response)=>{
+/*app.get("*", (req: Request, res: Response)=>{
     res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
-});
+});*/
+
+app.get("*", (req: Request, res: Response) => {
+    if (!req.originalUrl.startsWith("/api")) {
+      res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
+    } else {
+      res.status(404).send("API route not found");
+    }
+  });
 
 app.listen(7000,()=>{
     console.log("server running on localhost: 7000")
